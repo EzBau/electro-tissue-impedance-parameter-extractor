@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Electrode-Tissue Impedance Parameter Extractor</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="page-shell">
+  <header class="app-header">
+    <h1>Electrode-Tissue Impedance Parameter Extractor</h1>
+    <p class="subtitle">
+      You send a tiny, harmless electrical test signal into an electrode and measure how it pushes back at
+      different speeds. This tool looks at that response and works out four numbers describing what's
+      happening where the electrode meets the tissue, plus how much to trust each answer.
+    </p>
+    <p class="hint">
+      Technical description: Randles-CPE parameter recovery (Rs, Rct, Q, &alpha;) from an impedance
+      spectrum. A neural-network estimate is refined by local nonlinear least squares, entirely client-side.
+    </p>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button class="tab-btn active" data-mode="synth" role="tab" aria-selected="true">Synthesize</button>
+    <button class="tab-btn" data-mode="upload" role="tab" aria-selected="false">Upload spectrum</button>
+  </nav>
+
+  <main>
+    <!-- ============================ SYNTHESIZE ============================ -->
+    <section id="synth-panel" class="mode-panel">
+      <div class="layout-2col">
+        <div class="controls-col">
+          <div class="card">
+            <h2>Ground-truth parameters</h2>
+            <p class="explain">
+              Drag these to invent a scenario. The tool builds a spectrum from your settings, then tries to
+              work the same four numbers back out from that spectrum alone, so you can see, side by side,
+              how close it gets.
+            </p>
+
+            <div class="slider-row">
+              <label for="slider-rs">Rs <span class="unit">(ohm)</span></label>
+              <input type="range" id="slider-rs" min="3" max="4.69897" step="0.001" value="4" />
+              <p class="explain">
+                The plain resistance of the tissue and fluid around the electrode: a fixed obstacle to
+                current, like a length of wire. It doesn't change no matter how fast the test signal wiggles.
+              </p>
+              <p class="grounding">
+                Range 1 k&Omega;&ndash;50 k&Omega;: supported by real fitted values &mdash; Abidian &amp;
+                Martin 2009, 4.2&ndash;8.9 k&Omega; <a href="#ref-2" class="citation-link">[2]</a>; Nimbalkar
+                et al. 2018, R<sub>sol</sub>=4.4 k&Omega; <a href="#ref-4" class="citation-link">[4]</a>.
+                Exact endpoints are an engineering judgment call, not literature-pinned.
+              </p>
+              <output id="slider-rs-out">10000</output>
+            </div>
+            <div class="slider-row">
+              <label for="slider-rct">Rct <span class="unit">(ohm)</span></label>
+              <input type="range" id="slider-rct" min="4" max="7" step="0.001" value="5.5" />
+              <p class="explain">
+                How hard it is for charge to actually cross from the electrode into the tissue. Low means an
+                easy, leaky contact. High means a tight, resistant contact that charge struggles to cross.
+              </p>
+              <p class="grounding">
+                Range 10 k&Omega;&ndash;10 M&Omega;: narrower than the real fitted spread
+                <a href="#ref-1" class="citation-link">[1]</a><a href="#ref-2" class="citation-link">[2]</a>
+                &mdash; real devices range from 3.34 k&Omega;
+                <a href="#ref-4" class="citation-link">[4]</a> up to 97 M&Omega;
+                <a href="#ref-5" class="citation-link">[5]</a> across gold/graphene/TiN/glassy-carbon neural
+                microelectrodes. Treat this as a moderate-impedance electrode class, not a literature-pinned
+                outer bound.
+              </p>
+              <output id="slider-rct-out">316000</output>
+            </div>
+            <div class="slider-row">
+              <label for="slider-q">Q <span class="unit">(S&middot;s^&alpha;)</span></label>
+              <input type="range" id="slider-q" min="-9" max="-6" step="0.001" value="-7.5" />
+              <p class="explain">
+                How much the electrode surface behaves like a tiny capacitor, storing charge, rather than a
+                plain resistor. Rougher, larger, or more porous surfaces tend to store more, giving a bigger
+                number here.
+              </p>
+              <p class="grounding">
+                Range 1&times;10<sup>-9</sup>&ndash;1&times;10<sup>-6</sup> S&middot;s<sup>&alpha;</sup>:
+                close to, but slightly narrower than, the real measured spread of 6.7&times;10<sup>-10</sup>
+                to 1.25&times;10<sup>-6</sup> S&middot;s<sup>&alpha;</sup>
+                <a href="#ref-5" class="citation-link">[5]</a> &mdash; minor, acceptable undercoverage.
+              </p>
+              <output id="slider-q-out">3.16e-8</output>
+            </div>
+            <div class="slider-row">
+              <label for="slider-alpha">&alpha; <span class="unit">(0.5-0.999)</span></label>
+              <input type="range" id="slider-alpha" min="0.5" max="0.999" step="0.001" value="0.75" />
+              <p class="explain">
+                How close to textbook-ideal that capacitor-like behavior is. Close to 1.0 means a smooth,
+                clean capacitor. Lower means a rougher, less uniform surface that behaves more sloppily.
+              </p>
+              <p class="grounding">
+                Range 0.5&ndash;0.999: the upper portion (0.87&ndash;1.0) is directly supported by real
+                measurements <a href="#ref-2" class="citation-link">[2]</a><a href="#ref-4" class="citation-link">[4]</a><a href="#ref-5" class="citation-link">[5]</a>.
+                The 0.5 floor sits slightly below the lowest directly measured value (0.55
+                <a href="#ref-2" class="citation-link">[2]</a>), per the general CPE-modeling convention
+                (&alpha;&isin;[0,1]) rather than a literature-pinned bound.
+              </p>
+              <output id="slider-alpha-out">0.75</output>
+            </div>
+
+            <div class="preset-row">
+              <span class="preset-label">Phase 1 hand-checked cases:</span>
+              <p class="explain" style="margin: -2px 0 8px;">
+                Three specific scenarios checked by hand during development, so you can confirm at a glance
+                that the tool is working correctly.
+              </p>
+              <button class="preset-btn" data-preset="case1">Case 1: &alpha;&asymp;1 (RC)</button>
+              <button class="preset-btn" data-preset="case2">Case 2: &alpha;=0.5 (Warburg)</button>
+              <button class="preset-btn" data-preset="case3">Case 3: degenerate</button>
+            </div>
+
+            <div class="noise-controls">
+              <label><input type="checkbox" id="noise-toggle" /> Add measurement noise</label>
+              <p class="explain" style="margin: 6px 0 4px;">
+                Real instruments never give a perfectly clean reading. Turn this on to add realistic random
+                wobble to the generated spectrum, and see how well the tool still recovers the right answer.
+              </p>
+              <div class="slider-row" id="noise-mag-row" hidden>
+                <label for="slider-noise-mag">Magnitude noise</label>
+                <input type="range" id="slider-noise-mag" min="0" max="8" step="0.1" value="2" />
+                <p class="explain">How much the signal's size randomly wobbles from one reading to the next.</p>
+                <output id="slider-noise-mag-out">2.0%</output>
+              </div>
+              <div class="slider-row" id="noise-phase-row" hidden>
+                <label for="slider-noise-phase">Phase noise</label>
+                <input type="range" id="slider-noise-phase" min="0" max="3" step="0.05" value="0.5" />
+                <p class="explain">How much the signal's timing (its angle) randomly wobbles from one reading to the next.</p>
+                <output id="slider-noise-phase-out">0.5deg</output>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="results-col">
+          <div class="card" id="synth-results"></div>
+          <div class="card plot-card">
+            <h2>Nyquist</h2>
+            <p class="explain">
+              A shape-based fingerprint of the spectrum. Each dot is one test frequency. A smooth, rounded
+              arc usually means a clean, well-behaved electrode; a squashed or odd shape can point to a
+              messier or less certain fit.
+            </p>
+            <p class="legend"><span class="legend-measured">Measured (your data)</span><span class="legend-fit">Model's best-fit curve</span></p>
+            <div id="synth-nyquist"></div>
+          </div>
+          <div class="card plot-card">
+            <h2>Bode</h2>
+            <p class="explain">
+              The same data laid out directly against frequency. Top: how big the signal's resistance is at
+              each frequency. Bottom: how much the signal's timing shifts at each frequency.
+            </p>
+            <p class="legend"><span class="legend-measured">Measured (your data)</span><span class="legend-fit">Model's best-fit curve</span></p>
+            <div id="synth-bode"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== UPLOAD ============================== -->
+    <section id="upload-panel" class="mode-panel" hidden>
+      <div class="layout-2col">
+        <div class="controls-col">
+          <div class="card">
+            <h2>Paste or upload CSV</h2>
+            <p class="explain">
+              Bring your own measured spectrum instead of an invented one. Paste or upload it below, tell
+              the tool exactly how to read your columns, then run the same recovery process on real data.
+            </p>
+            <p class="hint">3 columns: frequency, col1, col2. One row per frequency point. A header row is OK.</p>
+            <textarea id="csv-text" rows="8" placeholder="freq,re,im&#10;1,52000,-3.1&#10;10,37847,-22523&#10;..."></textarea>
+            <input type="file" id="csv-file" accept=".csv,.txt" />
+
+            <div class="unit-selectors">
+              <div class="field">
+                <label for="unit-freq">Frequency unit</label>
+                <select id="unit-freq">
+                  <option value="Hz">Hz</option>
+                  <option value="rad_s">rad/s</option>
+                </select>
+                <p class="explain">How fast the test signal was swept. Almost all equipment reports this in Hz (cycles per second); pick rad/s only if your instrument explicitly says radians per second.</p>
+              </div>
+              <div class="field">
+                <label for="unit-repr">Impedance representation</label>
+                <select id="unit-repr">
+                  <option value="reim">Re / Im</option>
+                  <option value="magphase">Magnitude / Phase</option>
+                </select>
+                <p class="explain">How each reading was recorded: two plain numbers (Re/Im, common in raw data exports), or a size-and-angle pair (Magnitude/Phase, common when instruments report results directly).</p>
+              </div>
+              <div class="field" id="unit-phase-field" hidden>
+                <label for="unit-phase">Phase unit</label>
+                <select id="unit-phase">
+                  <option value="deg">degrees</option>
+                  <option value="rad">radians</option>
+                </select>
+                <p class="explain">Whether the angle numbers in your file go 0-360 (degrees) or 0-6.28 (radians).</p>
+              </div>
+            </div>
+
+            <button id="parse-btn" class="primary-btn">Parse</button>
+            <p class="explain" style="margin-top: 8px;">Reads your file and shows exactly what it understood below. Check this before running anything, so a units mistake is visible up front instead of producing a confidently wrong answer.</p>
+
+            <div id="parsed-preview"></div>
+            <div id="coverage-warnings"></div>
+
+            <button id="run-upload-btn" class="primary-btn" disabled>Run inference</button>
+          </div>
+        </div>
+
+        <div class="results-col">
+          <div class="card" id="upload-results"></div>
+          <div class="card plot-card">
+            <h2>Nyquist</h2>
+            <p class="explain">
+              A shape-based fingerprint of the spectrum. Each dot is one test frequency. A smooth, rounded
+              arc usually means a clean, well-behaved electrode; a squashed or odd shape can point to a
+              messier or less certain fit.
+            </p>
+            <p class="legend"><span class="legend-measured">Measured (your data)</span><span class="legend-fit">Model's best-fit curve</span></p>
+            <div id="upload-nyquist"></div>
+          </div>
+          <div class="card plot-card">
+            <h2>Bode</h2>
+            <p class="explain">
+              The same data laid out directly against frequency. Top: how big the signal's resistance is at
+              each frequency. Bottom: how much the signal's timing shifts at each frequency.
+            </p>
+            <p class="legend"><span class="legend-measured">Measured (your data)</span><span class="legend-fit">Model's best-fit curve</span></p>
+            <div id="upload-bode"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <section class="card references-card" id="references" aria-label="References">
+    <h2>References</h2>
+    <p class="explain">
+      Parameter ranges above are grounded in these sources where marked; gaps and extrapolations are
+      flagged explicitly rather than presented as fully literature-derived. Full detail, including
+      what was checked and what remains unverified, is in this project's <code>PHASE1_NOTES.md</code>
+      and <code>README.md</code>.
+    </p>
+    <ol class="ref-list">
+      <li id="ref-1">
+        Cogan, S.F. (2008). "Neural Stimulation and Recording Electrodes." <em>Annu. Rev. Biomed.
+        Eng.</em> 10:275&ndash;309.
+        <a href="https://doi.org/10.1146/annurev.bioeng.10.061807.160518" target="_blank" rel="noopener">DOI</a>.
+        Used for order-of-magnitude support of the <code>Rct</code> range (in vivo 1&nbsp;kHz total
+        impedance, 50&nbsp;k&Omega;&ndash;1&nbsp;M&Omega;, not a decomposed <code>Rct</code> value).
+      </li>
+      <li id="ref-2">
+        Abidian, M.R. &amp; Martin, D.C. (2009). "Experimental and theoretical characterization of
+        implantable neural microelectrodes modified with conducting polymer nanotubes."
+        <em>Biomaterials</em> 29(9):1273&ndash;1283.
+        <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC2692518/" target="_blank" rel="noopener">PMC2692518</a>.
+        Direct <code>Rs</code>, <code>Rct</code>, <code>Q</code>, and <code>&alpha;</code> measurements
+        on real gold neural-probe sites (four polymer coatings).
+      </li>
+      <li id="ref-3">
+        "Electrode impedance analysis of chronic tungsten microwire neural implants: understanding
+        abiotic vs. biotic contributions."
+        <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4021112/" target="_blank" rel="noopener">PMC4021112</a>.
+        Consulted as a candidate source for an <code>&alpha;</code>-vs-implant-time relationship; it
+        does not report CPE exponent values per timepoint, so it does not support that claim. Listed
+        for transparency, not as a source for a number used here.
+      </li>
+      <li id="ref-4">
+        Nimbalkar, S., Castagnola, E., Balasubramani, A., Scarpellini, A., Samejima, S., Khorasani, A.,
+        Boissenin, A., Thongpang, S., Moritz, C. &amp; Kassegne, S. (2018). "Ultra-Capacitive Carbon
+        Neural Probe Allows Simultaneous Long-Term Electrical Stimulations and High-Resolution
+        Neurotransmitter Detection." <em>Scientific Reports</em> 8, 6958.
+        <a href="https://doi.org/10.1038/s41598-018-25198-x" target="_blank" rel="noopener">DOI</a>.
+        Modified Randles-CPE fit on a glassy-carbon microelectrode: R<sub>sol</sub>=4.4&nbsp;k&Omega;,
+        <code>Rct</code>=3.34&nbsp;k&Omega;, Y<sub>0</sub> (<code>Q</code>)=4.07&times;10<sup>-11</sup>
+        S&middot;s<sup>&alpha;</sup>, <code>&alpha;</code>=0.87.
+      </li>
+      <li id="ref-5">
+        Greenhorn, S., Coizet, V., Dupuit, V., Fernandez, B., Bres, G., Claudel, A., Gasner, P.,
+        Warnking, J.M., Barbier, E.L. &amp; Delacour, C. (2024). "Ultrathin, flexible and
+        MRI-compatible microelectrode array for chronic single units recording within subcortical
+        layers." <a href="https://arxiv.org/abs/2402.04389" target="_blank" rel="noopener">arXiv:2402.04389</a>.
+        Real fitted resistances and CPE coefficients across flexible gold/graphene and rigid
+        TiN/graphene-on-sapphire neural microelectrodes: resistances from about 0.7&nbsp;M&Omega; to
+        97&nbsp;M&Omega;, CPE coefficients from about 6.7&times;10<sup>-10</sup> to
+        1.25&times;10<sup>-6</sup> S&middot;s<sup>&alpha;</sup>.
+      </li>
+    </ol>
+  </section>
+
+  <footer class="app-footer">
+    <p>
+      Everything runs in your browser: ONNX Runtime Web (WASM) for the neural-network estimate,
+      plain JS for the local refinement and plots. No data leaves this page.
+    </p>
+    <p id="model-status">Loading model&hellip;</p>
+  </footer>
+  </div>
+
+  <!-- ONNX Runtime Web (global `ort`), loaded before any module that uses it -->
+  <script src="vendor/onnxruntime-web/ort.wasm.min.js"></script>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
