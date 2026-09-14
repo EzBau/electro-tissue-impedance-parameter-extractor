@@ -1,0 +1,107 @@
+Phase 2 Task 4: PyTorch (ExportWrapper) vs ONNX Runtime (Python) sanity check
+
+20 random test-set spectra, params = [Rs, Rct, Q, alpha]
+
+sample 0:
+  Rs    torch=16199.576  onnx=16199.576  abs_diff=0.000e+00  rel_diff=0.000e+00
+  Rct   torch=1303342.1  onnx=1303342.1  abs_diff=0.000e+00  rel_diff=0.000e+00
+  Q     torch=2.175121e-09  onnx=2.175121e-09  abs_diff=0.000e+00  rel_diff=0.000e+00
+  alpha torch=0.54702169  onnx=0.54702175  abs_diff=5.960e-08  rel_diff=1.090e-07
+sample 1:
+  Rs    torch=33509.5  onnx=33509.5  abs_diff=0.000e+00  rel_diff=0.000e+00
+  Rct   torch=9015007  onnx=9015017  abs_diff=1.000e+01  rel_diff=1.109e-06
+  Q     torch=6.2981286e-08  onnx=6.298135e-08  abs_diff=6.395e-14  rel_diff=1.015e-06
+  alpha torch=0.99473381  onnx=0.99473381  abs_diff=0.000e+00  rel_diff=0.000e+00
+sample 2:
+  Rs    torch=39541.578  onnx=39541.535  abs_diff=4.297e-02  rel_diff=1.087e-06
+  Rct   torch=4679165.5  onnx=4679160.5  abs_diff=5.000e+00  rel_diff=1.069e-06
+  Q     torch=7.4403437e-07  onnx=7.4403357e-07  abs_diff=7.958e-13  rel_diff=1.070e-06
+  alpha torch=0.67845786  onnx=0.67845786  abs_diff=0.000e+00  rel_diff=0.000e+00
+sample 3:
+  Rs    torch=25895.693  onnx=25895.723  abs_diff=2.930e-02  rel_diff=1.131e-06
+  Rct   torch=6089099  onnx=6089092.5  abs_diff=6.500e+00  rel_diff=1.067e-06
+  Q     torch=9.0481969e-09  onnx=9.0481773e-09  abs_diff=1.954e-14  rel_diff=2.160e-06
+  alpha torch=0.55554444  onnx=0.55554438  abs_diff=5.960e-08  rel_diff=1.073e-07
+sample 4:
+  Rs    torch=6014.2998  onnx=6014.3027  abs_diff=2.930e-03  rel_diff=4.871e-07
+  Rct   torch=329284.25  onnx=329284.62  abs_diff=3.750e-01  rel_diff=1.139e-06
+  Q     torch=5.642828e-07  onnx=5.6428399e-07  abs_diff=1.194e-12  rel_diff=2.115e-06
+  alpha torch=0.75457448  onnx=0.75457442  abs_diff=5.960e-08  rel_diff=7.899e-08
+sample 5:
+  Rs    torch=26236.174  onnx=26236.201  abs_diff=2.734e-02  rel_diff=1.042e-06
+  Rct   torch=12964.4  onnx=12964.4  abs_diff=0.000e+00  rel_diff=0.000e+00
+  Q     torch=3.68036e-09  onnx=3.68036e-09  abs_diff=0.000e+00  rel_diff=0.000e+00
+  alpha torch=0.51638281  onnx=0.51638287  abs_diff=5.960e-08  rel_diff=1.154e-07
+sample 6:
+  Rs    torch=9084.2012  onnx=9084.1963  abs_diff=4.883e-03  rel_diff=5.375e-07
+  Rct   torch=879818.62  onnx=879817.69  abs_diff=9.375e-01  rel_diff=1.066e-06
+  Q     torch=1.5108394e-07  onnx=1.5108394e-07  abs_diff=0.000e+00  rel_diff=0.000e+00
+  alpha torch=0.74317223  onnx=0.74317229  abs_diff=5.960e-08  rel_diff=8.020e-08
+sample 7:
+  Rs    torch=32826.738  onnx=32826.773  abs_diff=3.516e-02  rel_diff=1.071e-06
+  Rct   torch=5644674.5  onnx=5644674.5  abs_diff=0.000e+00  rel_diff=0.000e+00
+  Q     torch=7.492128e-07  onnx=7.4921115e-07  abs_diff=1.648e-12  rel_diff=2.200e-06
+  alpha torch=0.52643627  onnx=0.52643627  abs_diff=0.000e+00  rel_diff=0.000e+00
+sample 8:
+  Rs    torch=30650.752  onnx=30650.719  abs_diff=3.320e-02  rel_diff=1.083e-06
+  Rct   torch=21760.287  onnx=21760.287  abs_diff=0.000e+00  rel_diff=0.000e+00
+  Q     torch=1.0878646e-08  onnx=1.0878646e-08  abs_diff=0.000e+00  rel_diff=0.000e+00
+  alpha torch=0.68348646  onnx=0.68348646  abs_diff=0.000e+00  rel_diff=0.000e+00
+sample 9:
+  Rs    torch=30513.352  onnx=30513.318  abs_diff=3.320e-02  rel_diff=1.088e-06
+  Rct   torch=86944.547  onnx=86944.453  abs_diff=9.375e-02  rel_diff=1.078e-06
+  Q     torch=1.8183237e-09  onnx=1.8183277e-09  abs_diff=3.997e-15  rel_diff=2.198e-06
+  alpha torch=0.59250498  onnx=0.59250498  abs_diff=0.000e+00  rel_diff=0.000e+00
+sample 10:
+  Rs    torch=17430.434  onnx=17430.434  abs_diff=0.000e+00  rel_diff=0.000e+00
+  Rct   torch=6287067  onnx=6287067  abs_diff=0.000e+00  rel_diff=0.000e+00
+  Q     torch=3.0719247e-07  onnx=3.0719247e-07  abs_diff=0.000e+00  rel_diff=0.000e+00
+  alpha torch=0.53972512  onnx=0.53972524  abs_diff=1.192e-07  rel_diff=2.209e-07
+sample 11:
+  Rs    torch=7600.7681  onnx=7600.772  abs_diff=3.906e-03  rel_diff=5.139e-07
+  Rct   torch=69610.039  onnx=69609.961  abs_diff=7.812e-02  rel_diff=1.122e-06
+  Q     torch=1.9549313e-08  onnx=1.9549313e-08  abs_diff=0.000e+00  rel_diff=0.000e+00
+  alpha torch=0.74177372  onnx=0.74177372  abs_diff=0.000e+00  rel_diff=0.000e+00
+sample 12:
+  Rs    torch=28565.324  onnx=28565.355  abs_diff=3.125e-02  rel_diff=1.094e-06
+  Rct   torch=15234.307  onnx=15234.307  abs_diff=0.000e+00  rel_diff=0.000e+00
+  Q     torch=2.3832447e-09  onnx=2.3832447e-09  abs_diff=0.000e+00  rel_diff=0.000e+00
+  alpha torch=0.67232215  onnx=0.67232221  abs_diff=5.960e-08  rel_diff=8.865e-08
+sample 13:
+  Rs    torch=3563.688  onnx=3563.686  abs_diff=1.953e-03  rel_diff=5.481e-07
+  Rct   torch=33537.879  onnx=33537.805  abs_diff=7.422e-02  rel_diff=2.213e-06
+  Q     torch=4.9558693e-08  onnx=4.955864e-08  abs_diff=5.329e-14  rel_diff=1.075e-06
+  alpha torch=0.95653838  onnx=0.95653844  abs_diff=5.960e-08  rel_diff=6.231e-08
+sample 14:
+  Rs    torch=44165.914  onnx=44165.914  abs_diff=0.000e+00  rel_diff=0.000e+00
+  Rct   torch=2388276.8  onnx=2388282  abs_diff=5.250e+00  rel_diff=2.198e-06
+  Q     torch=6.506356e-08  onnx=6.506356e-08  abs_diff=0.000e+00  rel_diff=0.000e+00
+  alpha torch=0.99020445  onnx=0.99020433  abs_diff=1.192e-07  rel_diff=1.204e-07
+sample 15:
+  Rs    torch=31504.773  onnx=31504.809  abs_diff=3.516e-02  rel_diff=1.116e-06
+  Rct   torch=2005861.5  onnx=2005861.5  abs_diff=0.000e+00  rel_diff=0.000e+00
+  Q     torch=6.6854176e-07  onnx=6.6854176e-07  abs_diff=0.000e+00  rel_diff=0.000e+00
+  alpha torch=0.57535976  onnx=0.5753597  abs_diff=5.960e-08  rel_diff=1.036e-07
+sample 16:
+  Rs    torch=47169.805  onnx=47169.805  abs_diff=0.000e+00  rel_diff=0.000e+00
+  Rct   torch=398930.56  onnx=398930.12  abs_diff=4.375e-01  rel_diff=1.097e-06
+  Q     torch=1.7192883e-07  onnx=1.7192883e-07  abs_diff=0.000e+00  rel_diff=0.000e+00
+  alpha torch=0.81256545  onnx=0.81256545  abs_diff=0.000e+00  rel_diff=0.000e+00
+sample 17:
+  Rs    torch=39148.512  onnx=39148.512  abs_diff=0.000e+00  rel_diff=0.000e+00
+  Rct   torch=59927.68  onnx=59927.812  abs_diff=1.328e-01  rel_diff=2.216e-06
+  Q     torch=3.7619849e-08  onnx=3.761993e-08  abs_diff=8.171e-14  rel_diff=2.172e-06
+  alpha torch=0.95402789  onnx=0.95402789  abs_diff=0.000e+00  rel_diff=0.000e+00
+sample 18:
+  Rs    torch=34715.965  onnx=34715.965  abs_diff=0.000e+00  rel_diff=0.000e+00
+  Rct   torch=346229.72  onnx=346230.47  abs_diff=7.500e-01  rel_diff=2.166e-06
+  Q     torch=6.2850307e-09  onnx=6.2850449e-09  abs_diff=1.421e-14  rel_diff=2.261e-06
+  alpha torch=0.64721209  onnx=0.64721209  abs_diff=0.000e+00  rel_diff=0.000e+00
+sample 19:
+  Rs    torch=27686.367  onnx=27686.338  abs_diff=2.930e-02  rel_diff=1.058e-06
+  Rct   torch=1612738.2  onnx=1612740  abs_diff=1.750e+00  rel_diff=1.085e-06
+  Q     torch=3.6005339e-08  onnx=3.6005378e-08  abs_diff=3.908e-14  rel_diff=1.085e-06
+  alpha torch=0.72000724  onnx=0.72000724  abs_diff=0.000e+00  rel_diff=0.000e+00
+
+max abs diff overall: 1.000000e+01
+max rel diff overall: 2.261064e-06

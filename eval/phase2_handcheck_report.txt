@@ -1,0 +1,30 @@
+# Phase 2 Task 6: Trained Model on Phase 1 Hand-Checked Cases
+
+## Case 1 -- alpha ~= 1.0, parallel RC (Rs=2000, Rct=50000, Q=2e-7, alpha=0.999999)
+
+| Parameter | Unit | Ground truth | Predicted | Abs error | Rel error |
+|---|---|---|---|---|---|
+| Rs | ohm | 2000 | 2204.35 | 204.4 | 10.2176% |
+| Rct | ohm | 50000 | 51801.1 | 1801 | 3.6021% |
+| Q | S*s^alpha | 2e-07 | 2.06797e-07 | 6.797e-09 | 3.3986% |
+| alpha | (dimensionless) | 0.999999 | 0.972207 | 0.02779 | 2.7792% |
+
+## Case 2 -- alpha = 0.5, Warburg-like (Rs=5000, Rct=1e7, Q=3e-8, alpha=0.5)
+
+| Parameter | Unit | Ground truth | Predicted | Abs error | Rel error |
+|---|---|---|---|---|---|
+| Rs | ohm | 5000 | 6724.14 | 1724 | 34.4827% |
+| Rct | ohm | 1e+07 | 9.13798e+06 | 8.62e+05 | 8.6202% |
+| Q | S*s^alpha | 3e-08 | 2.94628e-08 | 5.372e-10 | 1.7908% |
+| alpha | (dimensionless) | 0.5 | 0.505087 | 0.005087 | 1.0174% |
+
+## Case 3 -- degenerate-slice sample (same as Phase 1 verification Case 3)
+
+| Parameter | Unit | Ground truth | Predicted | Abs error | Rel error |
+|---|---|---|---|---|---|
+| Rs | ohm | 39330.3 | 36717.4 | 2613 | 6.6436% |
+| Rct | ohm | 2.22138e+06 | 2.18811e+06 | 3.328e+04 | 1.4981% |
+| Q | S*s^alpha | 1.03386e-07 | 1.12886e-07 | 9.501e-09 | 9.1895% |
+| alpha | (dimensionless) | 0.61869 | 0.622098 | 0.003407 | 0.5508% |
+
+Note: this is a sanity check on 3 specific points, not a substitute for the full per-parameter/per-slice metrics in eval/phase2_eval_report.md (Task 3). Case 3 in particular is expected to show larger error on Rct and/or alpha, consistent with the degenerate-slice non-identifiability documented there.

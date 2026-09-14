@@ -1,0 +1,39 @@
+Phase 2 Task 5: onnxruntime-web (WASM backend) browser-runtime verification
+Runtime: onnxruntime-web version 1.29.0, Node v24.19.0
+Model: C:\Users\jacob\ElectrodeTissueImpedanceParameterExtractor\models\model.onnx
+
+ONNX Runtime Web session created OK. Input names: re_im_spectrum, output names: params_raw
+
+sample index=14368 (slice_label=0):
+  Rs    onnxruntime-web=11712.299  python_onnxruntime=11712.286  ground_truth=11491.594  abs_diff=1.270e-2  rel_diff=1.084e-6
+  Rct   onnxruntime-web=17800.785  python_onnxruntime=17800.785  ground_truth=18228.689  abs_diff=0.000e+0  rel_diff=0.000e+0
+  Q     onnxruntime-web=8.4505620e-9  python_onnxruntime=8.4505434e-9  ground_truth=4.5963864e-9  abs_diff=1.865e-14  rel_diff=2.207e-6
+  alpha onnxruntime-web=0.94670349  python_onnxruntime=0.94670343  ground_truth=0.98555303  abs_diff=5.960e-8  rel_diff=6.296e-8
+
+sample index=7588 (slice_label=0):
+  Rs    onnxruntime-web=41479.738  python_onnxruntime=41479.738  ground_truth=37765.023  abs_diff=0.000e+0  rel_diff=0.000e+0
+  Rct   onnxruntime-web=19367.162  python_onnxruntime=19367.184  ground_truth=19943.545  abs_diff=2.148e-2  rel_diff=1.109e-6
+  Q     onnxruntime-web=5.8755911e-9  python_onnxruntime=5.8756040e-9  ground_truth=3.5568959e-9  abs_diff=1.288e-14  rel_diff=2.192e-6
+  alpha onnxruntime-web=0.85316002  python_onnxruntime=0.85315973  ground_truth=0.84461057  abs_diff=2.980e-7  rel_diff=3.493e-7
+
+sample index=2667 (slice_label=0):
+  Rs    onnxruntime-web=17388.400  python_onnxruntime=17388.420  ground_truth=10164.150  abs_diff=1.953e-2  rel_diff=1.123e-6
+  Rct   onnxruntime-web=328508.94  python_onnxruntime=328509.31  ground_truth=328956.97  abs_diff=3.750e-1  rel_diff=1.142e-6
+  Q     onnxruntime-web=8.4489848e-10  python_onnxruntime=8.4490037e-10  ground_truth=1.4375541e-9  abs_diff=1.887e-15  rel_diff=2.234e-6
+  alpha onnxruntime-web=0.73611170  python_onnxruntime=0.73611170  ground_truth=0.70463860  abs_diff=0.000e+0  rel_diff=0.000e+0
+
+sample index=8475 (slice_label=0):
+  Rs    onnxruntime-web=5686.9136  python_onnxruntime=5686.9136  ground_truth=6692.6548  abs_diff=0.000e+0  rel_diff=0.000e+0
+  Rct   onnxruntime-web=14214.463  python_onnxruntime=14214.447  ground_truth=10919.476  abs_diff=1.563e-2  rel_diff=1.099e-6
+  Q     onnxruntime-web=5.6849780e-7  python_onnxruntime=5.6849780e-7  ground_truth=3.3712132e-7  abs_diff=0.000e+0  rel_diff=0.000e+0
+  alpha onnxruntime-web=0.94924343  python_onnxruntime=0.94924331  ground_truth=0.99542838  abs_diff=1.192e-7  rel_diff=1.256e-7
+
+sample index=11363 (slice_label=1):
+  Rs    onnxruntime-web=29158.141  python_onnxruntime=29158.172  ground_truth=26804.633  abs_diff=3.125e-2  rel_diff=1.072e-6
+  Rct   onnxruntime-web=30599.475  python_onnxruntime=30599.475  ground_truth=31684.600  abs_diff=0.000e+0  rel_diff=0.000e+0
+  Q     onnxruntime-web=1.2034225e-7  python_onnxruntime=1.2034171e-7  ground_truth=2.3719271e-7  abs_diff=5.400e-13  rel_diff=4.487e-6
+  alpha onnxruntime-web=0.76916313  python_onnxruntime=0.76916337  ground_truth=0.66425508  abs_diff=2.384e-7  rel_diff=3.100e-7
+
+max abs diff (onnxruntime-web vs python onnxruntime) across all samples/params: 3.750000e-1
+max rel diff (onnxruntime-web vs python onnxruntime) across all samples/params: 4.487326e-6
+PASS: onnxruntime-web output matches Python onnxruntime closely (browser runtime confirmed working).
