@@ -1,0 +1,435 @@
+:root {
+  /* Strictly monochrome: white/gray/black only, no hue anywhere. Severity
+     (ok/caution/warning) is conveyed by border weight, fill opacity, and
+     an explicit text label/symbol -- never by color alone. */
+  --bg: #000000;
+  --card-bg: transparent;
+  --text: #f0f0f0;
+  --text-heading: #ffffff;
+  --text-muted: #a8a8a8;
+  --text-dim: #767676;
+  --border: rgba(255, 255, 255, 0.14);
+  --border-strong: rgba(255, 255, 255, 0.32);
+  --accent: #ffffff;
+  --accent-contrast: #000000;
+  --grid-color: rgba(255, 255, 255, 0.09);
+  --series-measured: #ffffff;
+  --series-fit: #a8a8a8;
+  --flag-ok-bg: rgba(255, 255, 255, 0.03);
+  --flag-ok-border: rgba(255, 255, 255, 0.18);
+  --flag-ok-text: #ffffff;
+  --flag-warn-bg: rgba(255, 255, 255, 0.05);
+  --flag-warn-border: rgba(255, 255, 255, 0.4);
+  --flag-warn-text: #ffffff;
+  --flag-bad-bg: rgba(255, 255, 255, 0.09);
+  --flag-bad-border: rgba(255, 255, 255, 0.85);
+  --flag-bad-text: #ffffff;
+  --max-width: 1080px;
+  font-family: -apple-system, "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.page-shell {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.app-header {
+  padding: 48px 0 28px;
+}
+.app-header h1 {
+  margin: 0 0 14px;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--text-heading);
+}
+.subtitle {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.98rem;
+  line-height: 1.6;
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 28px;
+  border-bottom: 1px solid var(--border);
+}
+.tab-btn {
+  padding: 11px 4px;
+  margin-right: 28px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+.tab-btn:hover { color: var(--text-muted); }
+.tab-btn.active {
+  color: var(--text-heading);
+  border-bottom-color: var(--accent);
+}
+
+main { padding-bottom: 56px; }
+
+.layout-2col {
+  display: grid;
+  grid-template-columns: minmax(280px, 380px) 1fr;
+  gap: 20px;
+  align-items: start;
+}
+@media (max-width: 860px) {
+  .layout-2col { grid-template-columns: 1fr; }
+}
+
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px 26px;
+  margin-bottom: 20px;
+}
+.card h2 {
+  margin: 0 0 18px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-heading);
+}
+
+.slider-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas: "label value" "caption caption" "grounding grounding" "track track";
+  align-items: center;
+  column-gap: 10px;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+}
+.slider-row label {
+  grid-area: label;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.slider-row output {
+  grid-area: value;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.82rem;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 3px 9px;
+  min-width: 64px;
+  background: rgba(255, 255, 255, 0.02);
+}
+.slider-row input[type="range"] { grid-area: track; }
+.unit { font-weight: 400; color: var(--text-dim); font-size: 0.85em; text-transform: none; letter-spacing: normal; }
+
+/* --- range slider --- */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 20px;
+  background: transparent;
+  cursor: pointer;
+  margin: 4px 0;
+}
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 2px;
+  background: var(--border-strong);
+  border-radius: 2px;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 15px;
+  height: 15px;
+  margin-top: -6.5px;
+  border-radius: 50%;
+  background: var(--text-heading);
+  border: 2px solid #000;
+  box-shadow: 0 0 0 1px var(--border-strong);
+}
+input[type="range"]::-moz-range-track {
+  height: 2px;
+  background: var(--border-strong);
+  border-radius: 2px;
+}
+input[type="range"]::-moz-range-thumb {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--text-heading);
+  border: 2px solid #000;
+  box-shadow: 0 0 0 1px var(--border-strong);
+}
+
+.preset-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin: 20px 0 4px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+.preset-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  width: 100%;
+  margin-bottom: 4px;
+}
+.preset-btn, .primary-btn {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+.preset-btn:hover, .primary-btn:hover { border-color: var(--accent); color: var(--accent); }
+.primary-btn {
+  background: var(--accent);
+  color: var(--accent-contrast);
+  border-color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 10px 18px;
+  margin-top: 12px;
+}
+.primary-btn:hover { background: #d8d8d8; border-color: #d8d8d8; color: var(--accent-contrast); }
+.primary-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+.noise-controls {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+.noise-controls > label { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.noise-controls input[type="checkbox"] { accent-color: var(--accent); width: 15px; height: 15px; }
+
+textarea#csv-text {
+  width: 100%;
+  font-family: ui-monospace, "SF Mono", Consolas, monospace;
+  font-size: 0.8rem;
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px;
+  resize: vertical;
+}
+textarea#csv-text::placeholder { color: var(--text-dim); }
+input[type="file"] {
+  margin-top: 10px;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+.unit-selectors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 18px 0;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.field select {
+  padding: 7px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text);
+  font-size: 0.85rem;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.hint { font-size: 0.8rem; color: var(--text-dim); margin: 0 0 10px; font-style: italic; }
+
+/* Plain-language explanation captions -- under slider labels, form
+   fields, card headings, etc. Not italic (italic is reserved for .hint's
+   more technical/incidental notes) so these read as the primary
+   explanation, not an aside. */
+.explain {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  margin: 0 0 14px;
+  line-height: 1.45;
+}
+.card h2 + .explain { margin-top: -10px; }
+.slider-row .explain { grid-area: caption; margin: 2px 0 6px; max-width: none; }
+.field .explain { font-size: 0.7rem; font-weight: 400; text-transform: none; letter-spacing: normal; margin: 2px 0 0; color: var(--text-dim); }
+
+/* Range grounding / in-text citations under a slider's plain-language
+   explanation -- deliberately smaller and dimmer than .explain, since
+   it's a supporting footnote, not the primary caption. */
+.slider-row .grounding { grid-area: grounding; margin: -4px 0 8px; }
+.grounding {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  line-height: 1.45;
+  margin: 0 0 10px;
+}
+.citation-link {
+  color: var(--text-muted);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--border-strong);
+}
+.citation-link:hover, .citation-link:focus { color: var(--accent); border-bottom-color: var(--accent); }
+
+.references-card ol.ref-list {
+  margin: 0;
+  padding-left: 22px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+.references-card ol.ref-list li { margin-bottom: 12px; }
+.references-card ol.ref-list li:target { color: var(--text-heading); }
+.references-card code {
+  font-family: ui-monospace, "SF Mono", Consolas, monospace;
+  font-size: 0.92em;
+  color: var(--text);
+}
+.references-card a { color: var(--text-muted); text-decoration: underline; }
+.references-card a:hover, .references-card a:focus { color: var(--accent); }
+
+table.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.83rem;
+  margin: 12px 0;
+}
+table.data-table th, table.data-table td {
+  border: 1px solid var(--border);
+  padding: 7px 10px;
+  text-align: right;
+  color: var(--text);
+}
+table.data-table th:first-child, table.data-table td:first-child { text-align: left; }
+table.data-table th {
+  background: rgba(255, 255, 255, 0.03);
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.result-row-flag { font-size: 0.78em; color: var(--text-dim); font-style: italic; }
+
+.flag-box {
+  border-radius: 6px;
+  padding: 12px 14px;
+  margin: 10px 0;
+  font-size: 0.86rem;
+  border: 1px solid;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+/* Severity is conveyed by border weight + fill opacity + an explicit
+   text label/symbol in the markup -- deliberately not by color, since
+   this page never uses color at all. */
+.flag-ok { background: var(--flag-ok-bg); border-color: var(--flag-ok-border); border-width: 1px; }
+.flag-ok strong { color: var(--flag-ok-text); }
+.flag-warn { background: var(--flag-warn-bg); border-color: var(--flag-warn-border); border-width: 1px; }
+.flag-warn strong { color: var(--flag-warn-text); }
+.flag-bad {
+  background: var(--flag-bad-bg);
+  border-color: var(--flag-bad-border);
+  border-width: 2px;
+  font-weight: 500;
+}
+.flag-bad strong { color: var(--flag-bad-text); }
+.flag-box strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.legend {
+  display: flex;
+  gap: 20px;
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  margin: 0 0 10px;
+}
+.legend span { display: inline-flex; align-items: center; }
+.legend span::before {
+  content: "";
+  display: inline-block;
+  margin-right: 7px;
+  vertical-align: middle;
+}
+/* Dot vs. dashed line -- the same shape distinction used in the actual
+   plots -- so the legend never has to rely on color. */
+.legend .legend-measured::before {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--series-measured);
+}
+.legend .legend-fit::before {
+  width: 18px;
+  height: 0;
+  border-top: 2px dashed var(--series-fit);
+}
+
+.axis-label { font-size: 9px; fill: var(--text-dim); }
+.axis-title { font-size: 10px; fill: var(--text-muted); font-weight: 600; }
+
+.plot-card svg { display: block; width: 100%; height: auto; }
+
+.app-footer {
+  padding: 24px 0 48px;
+  color: var(--text-dim);
+  font-size: 0.8rem;
+  border-top: 1px solid var(--border);
+  line-height: 1.6;
+}
+#model-status { font-weight: 700; color: var(--text-muted); }
